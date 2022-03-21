@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item android:id="@+id/profile"
+            android:icon="@drawable/ic_baseline_person_24"
+            android:title="Profile"/>
+
+        <item android:id="@+id/nvg_billing"
+            android:icon="@drawable/money"
+            android:title="Billing"/>
+
+       <item android:id="@+id/nvg_share"
+           android:icon="@drawable/share"
+           android:title="Share"/>
+
+        <item android:id="@+id/nvg_withdraw"
+            android:icon="@drawable/withdraw"
+            android:title="WithDraw Amount"/>
+
+        <item android:id="@+id/aboutus"
+            android:icon="@drawable/ic_baseline_info_24"
+            android:title="About Us and FAQs"/>
+
+        <item android:id="@+id/nvg_log_out"
+            android:icon="@drawable/ic_logout"
+            android:title="Logout"/>
+
+
+    </group>
+
+</menu>

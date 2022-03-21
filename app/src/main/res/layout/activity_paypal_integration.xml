@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".PayPal.PaypalIntegration">
+
+    <include android:id="@+id/toolbar"
+        layout="@layout/custom_toolbar"/>
+
+    <TextView
+        android:id="@+id/payment_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Payment Methods"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/textview_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/creditcard_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Credit Card"
+        android:layout_margin="10dp"
+        android:textColor="@color/textview_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mastercard_img"
+        app:layout_constraintBottom_toBottomOf="@id/mastercard_img"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/mastercard_img"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/mastercard"
+        app:layout_constraintStart_toEndOf="@id/creditcard_text"
+        app:layout_constraintTop_toBottomOf="@id/payment_text"
+        app:layout_constraintBottom_toTopOf="@id/payment_credit_card"
+        />
+
+    <ImageView
+        android:id="@+id/visa_img"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/visa"
+        app:layout_constraintStart_toEndOf="@id/mastercard_img"
+        app:layout_constraintTop_toBottomOf="@id/payment_text"
+        app:layout_constraintBottom_toTopOf="@id/payment_credit_card"
+        />
+
+    <ImageView
+        android:id="@+id/americanexpress_img"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/americaexpress"
+        app:layout_constraintStart_toEndOf="@id/visa_img"
+        app:layout_constraintTop_toBottomOf="@id/payment_text"
+        app:layout_constraintBottom_toTopOf="@id/payment_credit_card"
+        />
+
+    <com.paypal.checkout.paymentbutton.PayPalCreditButton
+        android:id="@+id/payment_credit_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        android:layout_margin="40dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/creditcard_text"/>
+
+
+    <TextView
+        android:id="@+id/tv_move_credit_card_payments"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:gravity="center"
+        android:text="Payment Via Credit/Debit Card"
+        android:textColor="@color/textview_color"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:background="@drawable/roundedbutton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/creditcard_text"
+        tools:ignore="MissingConstraints"/>
+
+
+    <TextView
+        android:id="@+id/paypal_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Paypal"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/textview_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/paypal_img"
+        app:layout_constraintTop_toBottomOf="@id/tv_move_credit_card_payments"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/paypal_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/paypal"
+        app:layout_constraintStart_toEndOf="@id/paypal_text"
+        app:layout_constraintTop_toBottomOf="@id/tv_move_credit_card_payments"
+        app:layout_constraintBottom_toTopOf="@id/payPalButton"
+        />
+
+    <com.paypal.checkout.paymentbutton.PayPalButton
+        android:id="@+id/payPalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:paddingRight="50dp"
+        android:paddingLeft="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/paypal_text"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

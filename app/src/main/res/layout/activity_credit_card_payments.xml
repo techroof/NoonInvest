@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundcolor"
+    tools:context=".CreditCardPayments">
+<LinearLayout
+    android:visibility="gone"
+    android:id="@+id/waiting_group"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_centerInParent="true">
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="we are trying to contact to the server to get the token"/>
+
+
+
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/payment_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Amount will be deducted from your Credit/Debit Card"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+       <!-- <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/edt_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="CHOOSE the amount to pay in USD"
+                android:imeOptions="actionDone"
+                android:inputType="number">
+
+
+            </EditText>
+        </com.google.android.material.textfield.TextInputLayout>-->
+
+        <Button
+            android:id="@+id/pay_with_creditcard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/roundedbutton"
+            android:text="PAY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>

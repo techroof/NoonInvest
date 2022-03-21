@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "894688216836",
+    "project_id": "nooninvest-ab2cf",
+    "storage_bucket": "nooninvest-ab2cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894688216836:android:5f392785081052c7e1f251",
+        "android_client_info": {
+          "package_name": "com.techroof.nooninvest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "894688216836-eqbiucojdsolf7titm0g84lem8qhbohm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsmyjGUTlxh5C0X_bm8aS5tBza-RAvBz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "894688216836-eqbiucojdsolf7titm0g84lem8qhbohm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894688216836:android:50215da9bac125c2e1f251",
+        "android_client_info": {
+          "package_name": "com.techroof.user.nooninvest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "894688216836-evjl2i17elvqvd9jk2ae8q4rmvjtveko.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.techroof.user.nooninvest",
+            "certificate_hash": "7fb2a15f08693878e69afd2f9f055fe9a7848826"
+          }
+        },
+        {
+          "client_id": "894688216836-eqbiucojdsolf7titm0g84lem8qhbohm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsmyjGUTlxh5C0X_bm8aS5tBza-RAvBz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "894688216836-eqbiucojdsolf7titm0g84lem8qhbohm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
