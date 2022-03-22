@@ -19,7 +19,7 @@
 
         <item android:id="@+id/nvg_withdraw"
             android:icon="@drawable/withdraw"
-            android:title="WithDraw Amount"/>
+            android:title="Wallet"/>
 
         <item android:id="@+id/aboutus"
             android:icon="@drawable/ic_baseline_info_24"

@@ -51,7 +51,7 @@
         tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/daily_amount_referrals"
+        android:id="@+id/tv_Bank_Name_Refferals"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_marginLeft="50dp"
@@ -63,6 +63,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_Account_No_Refferals"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/daily_amount_referrals"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginBottom="510dp"
+        android:textColor="@color/textview_color"
+        android:textSize="12sp"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Bank_Name_Refferals"
         tools:ignore="MissingConstraints" />
 
     <TextView

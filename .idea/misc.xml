@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/drawable/withdraw.xml" value="0.20885416666666667" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/activity_account_details.xml" value="0.1" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/activity_create_deep_link.xml" value="0.1" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/activity_credit_card_payments.xml" value="0.18" />
@@ -14,9 +15,14 @@
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/activity_paypal_integration.xml" value="0.25" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/activity_stripe_checkout.xml" value="0.25" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/activity_withdrawal_amounts.xml" value="0.1" />
+        <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/billing_custom_dialog.xml" value="0.33" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/custom_recyclerview.xml" value="0.20416666666666666" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/custom_toolbar.xml" value="0.20416666666666666" />
+        <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/fragment_profile.xml" value="0.22" />
+        <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/fragment_refferal_withdrawal.xml" value="0.19270833333333334" />
+        <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/fragment_wallet_withdrawal.xml" value="0.22" />
         <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/layout/wrapper.xml" value="0.20416666666666666" />
+        <entry key="..\:/mov/NoonInvest/NoonInvest2/app/src/main/res/menu/main_menu.xml" value="0.22" />
       </map>
     </option>
   </component>

@@ -55,7 +55,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     ImageView imgToolbar;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-    String uid,accountNumber;
+    String uid,accountNumber,bankName;
     //dialog
     private Dialog dialog;
 
@@ -109,6 +109,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 Button Okay = dialog.findViewById(R.id.btn_okay);
                 Button Cancel = dialog.findViewById(R.id.btn_cancel);
                 EditText AccountNo=dialog.findViewById(R.id.et_accountno);
+                EditText BankName=dialog.findViewById(R.id.et_bank_name);
 
 
                 Okay.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +118,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                         uid = firebaseAuth.getUid();
                         accountNumber=AccountNo.getText().toString();
-                        addAcountNumber(uid, accountNumber);
+                        bankName=BankName.getText().toString();
+                        addAcountNumber(uid, accountNumber,bankName);
 
 
                         //dialog.dismiss();
@@ -317,11 +319,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
     //adding account number
-    private void addAcountNumber(String uId, String accountNumber) {
+    private void addAcountNumber(String uId, String accountNumber, String bankName) {
 
         Map<String, Object> AccountMap = new HashMap<>();
         AccountMap.put("id", uId);
         AccountMap.put("AccountNumber", accountNumber);
+        AccountMap.put("BankName",bankName);
 
 
         firebaseFirestore.collection("AccountNo")

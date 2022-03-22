@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class RefferalWithdrawalFragment extends Fragment {
 
-    private TextView accountNumberText, dailyAmountText, totalAvailableText, activationDateText;
+    private TextView accountNumberText, dailyAmountText, totalAvailableText, activationDateText,bankName;
     private Button btnRqstamount;
     private FirebaseFirestore firestore;
     private FirebaseAuth firebaseAuth;
@@ -40,6 +40,7 @@ public class RefferalWithdrawalFragment extends Fragment {
     private String AccountNumber;
     private String UName;
     private String withdrawalId;
+    private String bankNAme;
     private final String Status = "Requested";
     private String activationDate;
     private String dailyAmount;
@@ -72,6 +73,7 @@ public class RefferalWithdrawalFragment extends Fragment {
         totalAvailableText = view.findViewById(R.id.referral_total_available_amount);
         activationDateText = view.findViewById(R.id.activation_date_referrals);
         dailyAmountText = view.findViewById(R.id.daily_amount_referrals);
+        bankName=view.findViewById(R.id.tv_Bank_Name_Refferals);
 
         firestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -198,7 +200,7 @@ public class RefferalWithdrawalFragment extends Fragment {
     }
 
 
-    private void Addrequest(String uid, String uName, String accountNumber, String status, double WithdrawalAmounts) {
+    private void Addrequest(String uid, String uName, String accountNumber, String status, double WithdrawalAmounts,String BankName) {
         ref = firestore.collection("SentRequestsRefferals").document();
         withdrawalId = ref.getId();
         Map<String, Object> AccountMap = new HashMap<>();
@@ -208,6 +210,7 @@ public class RefferalWithdrawalFragment extends Fragment {
         AccountMap.put("Status", status);
         AccountMap.put("withdrawalAmount", WithdrawalAmounts);
         AccountMap.put("WithDrawalId", withdrawalId);
+        AccountMap.put("BankName",BankName);
         ref.set(AccountMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -288,9 +291,11 @@ public class RefferalWithdrawalFragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
 
                             UAccountNo = document.getString("AccountNumber");
+                            bankNAme=document.getString("BankName");
                             uid = firebaseAuth.getUid();
                             //Toast.makeText(getContext(), " id" + uid, Toast.LENGTH_SHORT).show();
                             accountNumberText.setText("Account Number: "+UAccountNo);
+                            bankName.setText("Bank Name:  "+bankNAme);
 
                         }
                     }
@@ -317,9 +322,15 @@ public class RefferalWithdrawalFragment extends Fragment {
 
         if (userWithdrawlStatus.equals("False")) {
             //adding
+
             if (WithDrawalamaount >= 100) {
 
-                Addrequest(uid, UName, AccountNumber, Status, WithDrawalamaount);
+                Addrequest(uid, UName, AccountNumber, Status, WithDrawalamaount,bankNAme);
+            }
+            if(WithDrawalamaount<100){
+
+                Toast.makeText(getContext(),"Your withdrawal limit is not reached yet",Toast.LENGTH_LONG).show();
+
             }
 
         } else if (userWithdrawlStatus.equals("True")) {

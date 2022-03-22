@@ -39,7 +39,8 @@ import java.util.Map;
 public class WalletWithdrawalFragment extends Fragment {
 
 
-    private TextView tvAccountnumber, noWalletText,availableAmountText;
+    private TextView tvAccountnumber, noWalletText,availableAmountText, tvName, tvEmail, tvPhoneNumber, tvClasscategory, tvdailyAmount, tvdate,
+            tvinvestmentAmount, tvitemCategory, tvtotalProfit,tvBankName;
     private Button btnRqstamount;
     private FirebaseFirestore firestore;
     private FirebaseAuth firebaseAuth;
@@ -47,11 +48,16 @@ public class WalletWithdrawalFragment extends Fragment {
     private String AccountNumber;
     private String UName;
     private String withdrawalId;
+    private String bankName;
     private final String Status = "Requested";
     private double WithDrawalamaount;
     private DocumentReference ref;
     private String Uidd, Statuss, userWithdrawlStatus = "";
-    private ConstraintLayout walletCl;
+    private ConstraintLayout walletCl,investmentCl;
+
+    //wallet profile
+    String Name, Email, PhoneNumber, ClassCategory, DailyAmount, Date, InvestmentAmount, ItemCategory, TotalProfit, uId,BankName;
+
 
 
     public WalletWithdrawalFragment() {
@@ -74,8 +80,30 @@ public class WalletWithdrawalFragment extends Fragment {
         btnRqstamount = view.findViewById(R.id.btn_request_amount_wallets);
         tvAccountnumber = view.findViewById(R.id.tv_Account_No_Wallets);
         walletCl = view.findViewById(R.id.wallet_cl);
+        investmentCl=view.findViewById(R.id.investment_cl);
         noWalletText = view.findViewById(R.id.no_wallet_text);
         availableAmountText=view.findViewById(R.id.withdrawl_amount_text);
+        tvBankName=view.findViewById(R.id.tv_Bank_Name_Wallets);
+        //wallet profile
+        tvName = view.findViewById(R.id.UserName);
+        tvEmail = view.findViewById(R.id.user_email);
+        tvPhoneNumber = view.findViewById(R.id.user_phoneno);
+        tvClasscategory = view.findViewById(R.id.user_class_category);
+        tvdailyAmount = view.findViewById(R.id.user_daily_amount);
+        tvdate = view.findViewById(R.id.user_date);
+        tvinvestmentAmount = view.findViewById(R.id.user_investment_amount);
+        tvitemCategory = view.findViewById(R.id.user_item_category);
+        tvtotalProfit = view.findViewById(R.id.user_net_profit);
+
+        Name = tvName.getText().toString();
+        Email = tvEmail.getText().toString();
+        PhoneNumber = tvPhoneNumber.getText().toString();
+        ClassCategory = tvClasscategory.getText().toString();
+        DailyAmount = tvdailyAmount.getText().toString();
+        Date = tvdate.getText().toString();
+        InvestmentAmount = tvinvestmentAmount.getText().toString();
+        ItemCategory = tvitemCategory.getText().toString();
+        TotalProfit = tvtotalProfit.getText().toString();
 
         firestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -84,6 +112,47 @@ public class WalletWithdrawalFragment extends Fragment {
         getdata();
         getName();
         getTotalProfit();
+        getuserData();
+
+        //method
+
+
+        firestore.collection("wallets").document(uId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if(task.isSuccessful()){
+
+                    DocumentSnapshot documentSnapshot= task.getResult();
+                    if(documentSnapshot.exists()){
+
+                        getUserWalletData();
+
+                        noWalletText.setVisibility(View.INVISIBLE);
+                        investmentCl.setVisibility(View.VISIBLE);
+                        //  Intent intent=new Intent(getContext(), HomeActivity.class);
+                        // startActivity(intent);
+
+                    }else{
+
+                        investmentCl.setVisibility(View.INVISIBLE);
+                        noWalletText.setVisibility(View.VISIBLE);
+
+                    }
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
+
 
         uid = firebaseAuth.getUid();
         AccountNumber = tvAccountnumber.getText().toString();
@@ -121,11 +190,18 @@ public class WalletWithdrawalFragment extends Fragment {
 
                 if (userWithdrawlStatus.equals("False")) {
                     //adding
-                    //Toast.makeText(getContext(),"TESTED",Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getContext(),"Your withdrawal limit is not reached yet",Toast.LENGTH_LONG).show();
                     if (WithDrawalamaount >= 100) {
                         //Toast.makeText(getContext(),"TESTEDy",Toast.LENGTH_LONG).show();
 
-                        Addrequest(uid, UName, AccountNumber, Status, WithDrawalamaount);
+                        Addrequest(uid, UName, AccountNumber, Status, WithDrawalamaount,bankName);
+
+
+                    }
+                    if(WithDrawalamaount<100){
+
+                        Toast.makeText(getContext(),"Your withdrawal limit is not reached yet",Toast.LENGTH_LONG).show();
+
                     }
 
                 } else if (userWithdrawlStatus.equals("True")) {
@@ -216,7 +292,7 @@ public class WalletWithdrawalFragment extends Fragment {
         });
     }
 
-    private void Addrequest(String uid, String uName, String accountNumber, String status, double WithdrawalAmounts) {
+    private void Addrequest(String uid, String uName, String accountNumber, String status, double WithdrawalAmounts,String BankName) {
         ref = firestore.collection("SentRequestsWallets").document();
         withdrawalId = ref.getId();
         Map<String, Object> AccountMap = new HashMap<>();
@@ -226,6 +302,7 @@ public class WalletWithdrawalFragment extends Fragment {
         AccountMap.put("Status", status);
         AccountMap.put("withdrawalAmount", WithdrawalAmounts);
         AccountMap.put("WithDrawalId", withdrawalId);
+        AccountMap.put("BankName",bankName);
         ref.set(AccountMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -297,11 +374,14 @@ public class WalletWithdrawalFragment extends Fragment {
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
                         String UAccountNo = document.getString("AccountNumber");
+                        String bnkname=document.getString("BankName");
                         uid = firebaseAuth.getUid();
                         // Toast.makeText(getContext(), " id" + uid, Toast.LENGTH_SHORT).show();
                         tvAccountnumber.setText(UAccountNo);
-                        availableAmountText.setText("$"+WithDrawalamaount);
+                        tvBankName.setText(bnkname);
+                        //availableAmountText.setText("$" + WithDrawalamaount);
                         AccountNumber = tvAccountnumber.getText().toString();
+                        BankName=tvBankName.getText().toString();
 
                     }
                 } else {
@@ -321,6 +401,105 @@ public class WalletWithdrawalFragment extends Fragment {
 
 
     }
+
+    //profile details
+
+    void getuserData() {
+
+        uId = FirebaseAuth.getInstance().getUid();
+        firestore.collection("users")
+                .whereEqualTo("id", uId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                        String UName = document.getString("name");
+                        String UEmail = document.getString("email");
+                        String UPhoneNumber = document.getString("phoneNumber");
+                        uId = firebaseAuth.getUid();
+                        // Toast.makeText(getContext(), " id" + uId, Toast.LENGTH_SHORT).show();
+                        tvName.setText(UName);
+                        tvEmail.setText(UEmail);
+                        tvPhoneNumber.setText(UPhoneNumber);
+
+                    }
+                } else {
+                    Log.d("d", "Error getting documents: ", task.getException());
+
+                }
+            }
+
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+
+            }
+        });
+
+    }
+
+
+    //get user wallet data
+    private void getUserWalletData() {
+
+        uId = FirebaseAuth.getInstance().getUid();
+        firestore.collection("wallets")
+                .whereEqualTo("id", uId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                        String UInvestementAmount = document.getString("investementAmount");
+                        String UClassCategory = document.getString("classCategory");
+                        String UItemCategory = document.getString("itemCategory");
+                        String UDate = document.getString("date");
+                        double UDailyAmount = document.getDouble("dailyAmount").doubleValue();
+                        String sDailyAmount = String.valueOf(UDailyAmount);
+                        //int UDailyAmount= parseInt(document.get("handicap"));
+                        Double UTotalProfit = document.getDouble("totalProfit");
+                        uId = firebaseAuth.getUid();
+                        String sTotalProfit = String.valueOf(UTotalProfit);
+                        // Toast.makeText(getContext(), " id" + uId, Toast.LENGTH_SHORT).show();
+                        tvinvestmentAmount.setText(UInvestementAmount);
+                        tvClasscategory.setText(UClassCategory);
+                        tvitemCategory.setText(UItemCategory);
+                        tvdate.setText(UDate);
+                        tvdailyAmount.setText(sDailyAmount);
+                        //Toast.makeText(getContext(), "" + sDailyAmount, Toast.LENGTH_LONG).show();
+                        tvtotalProfit.setText(sTotalProfit);
+                        availableAmountText.setText("$"+sTotalProfit);
+
+
+                    }
+                } else {
+                    Log.d("d", "Error getting documents: ", task.getException());
+
+                }
+            }
+
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
+    }
+
+
+
 
 
 }
