@@ -55,6 +55,7 @@ public class WalletWithdrawalFragment extends Fragment {
     private String Uidd, Statuss, userWithdrawlStatus = "";
     private ConstraintLayout walletCl,investmentCl;
 
+    //commit
     //wallet profile
     String Name, Email, PhoneNumber, ClassCategory, DailyAmount, Date, InvestmentAmount, ItemCategory, TotalProfit, uId,BankName;
 
