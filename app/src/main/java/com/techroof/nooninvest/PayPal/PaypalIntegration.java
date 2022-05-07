@@ -156,7 +156,7 @@ public class PaypalIntegration extends AppCompatActivity {
 
                     customer_ID = object.getString("id");
                     getEphericalkey(customer_ID);
-                    Toast.makeText(getApplicationContext(), "yes"+customer_ID, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "yes"+customer_ID, Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -273,7 +273,7 @@ public class PaypalIntegration extends AppCompatActivity {
 
             firestore.collection("wallets")
                     .document(uId)
-                    .set(WalletMap)
+                    .update(WalletMap)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -326,13 +326,13 @@ public class PaypalIntegration extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
                     Ephericalkey = object.getString("id");
-                    Toast.makeText(getApplicationContext(), "s" + Ephericalkey, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "s" + Ephericalkey, Toast.LENGTH_SHORT).show();
 
                     getClientSecret(customer_ID, Ephericalkey);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "epherical"+e.toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "epherical"+e.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -386,7 +386,7 @@ public class PaypalIntegration extends AppCompatActivity {
 
                         pd.dismiss();
                     }
-                    Toast.makeText(getApplicationContext(), "sd" + ClientSecret, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "sd" + ClientSecret, Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -427,7 +427,9 @@ public class PaypalIntegration extends AppCompatActivity {
     }
 
     private void PaymentFlow() {
+
         paymentSheet.presentWithPaymentIntent(ClientSecret, new PaymentSheet.Configuration("nooninvest", new PaymentSheet.CustomerConfiguration(customer_ID, Ephericalkey)));
+
     }
     }
 

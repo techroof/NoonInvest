@@ -1,10 +1,12 @@
 package com.techroof.nooninvest;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,9 +61,12 @@ public class ClassAFragment extends Fragment {
     double updateTotalProfitAmount = 1.25;
     int Refferals = 0;
     double getTotalProfitAmount;
+    private Dialog dialog;
     double getDailyAmount;
     double addTotalProfit;
     private String dailyinvest;
+    //values that should be updated
+    private float updateTotalProfit;
 
     Date date1;
 
@@ -73,6 +79,18 @@ public class ClassAFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view;
         view = inflater.inflate(R.layout.fragment_class_a, container, false);
+        //dialogbox
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.activation_custom_dialog);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            dialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.custom_dialog_background));
+        }
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false); //Optional
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation; //Setting the animations to dialog
+        Button Okay = dialog.findViewById(R.id.activation_btn_okay);
+        Button Cancel = dialog.findViewById(R.id.activation_btn_cancel);
+
         textViewInvestmentAmount = view.findViewById(R.id.investement_amount);
         textViewDailyIncome = view.findViewById(R.id.txtview_dailyincome);
         firestore = FirebaseFirestore.getInstance();
@@ -81,9 +99,27 @@ public class ClassAFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 
+        Okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                UpdatePackage();
+
+            }
+        });
+
+        Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialog.dismiss();
+            }
+        });
+
         getdata();
         //getTotalProfit();
         String getdailyincome = textViewDailyIncome.getText().toString();
+
 
         btnaddInvest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +144,11 @@ public class ClassAFragment extends Fragment {
                        DocumentSnapshot documentSnapshot=task.getResult();
 
                        if(documentSnapshot.exists()){
-                           Toast.makeText(getContext(), "you have already invested", Toast.LENGTH_SHORT).show();
+                           //Toast.makeText(getContext(), "you have already invested", Toast.LENGTH_SHORT).show();
+
+                           getWalletDetails();
+
+                           dialog.show();
 
 
                        }else{
@@ -185,6 +225,25 @@ Timer timer=new Timer();
         return view;
     }
 
+    private void getWalletDetails() {
+
+        firestore.collection("wallets").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+            updateTotalProfit= task.getResult().getDouble("totalProfit").floatValue();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+    }
+
+
     private void addInvest(String uId, String investmentAmount, String classCategory, String itemCategory, String Date, Float DailyInvestment, double TotalProfit) {
 
         String wallet_ID = firestore.collection("Wallet").document().getId();
@@ -246,6 +305,7 @@ Timer timer=new Timer();
                         textViewDailyIncome.setText("$"+dailyinvest);
 
                     }
+
                 } else {
                     Log.d("d", "Error getting documents: ", task.getException());
 
@@ -364,6 +424,57 @@ Timer timer=new Timer();
                 Toast.makeText(getContext(), "NO!", Toast.LENGTH_LONG).show();
             }
         });
+
+    }
+
+    private void UpdatePackage() {
+
+        uid = firebaseAuth.getUid();
+        //investmentAmount = textViewInvestmentAmount.getText().toString();
+        classCategory = "A";
+        itemCategory = category;
+        date = currentDate;
+        //String s = textViewDailyIncome.getText().toString();
+        String s = dailyinvest;
+        float IncDaily = Float.parseFloat(s);
+        totalProfitAmount = 0;
+        //Toast.makeText(getContext(), "" + IncDaily, Toast.LENGTH_SHORT).show();
+
+        firestore.collection("wallets").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if(task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot=task.getResult();
+
+                    if(documentSnapshot.exists()){
+
+                        SharedPreferences shrd= getActivity().getSharedPreferences("requestspayments",Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor= shrd.edit();
+                        editor.putString("str",s);
+                        editor.putString("uid",uid);
+                        editor.putString("investmentAmount",investmentAmount);
+                        editor.putString("classCategory",classCategory);
+                        editor.putString("itemCategory",itemCategory);
+                        editor.putString("date",date);
+                        editor.putFloat("IncDaily",IncDaily);
+                        editor.putFloat("totalProfitAmount",  updateTotalProfit);
+                        editor.apply();
+                        //addInvest(uid, investmentAmount, classCategory, itemCategory, date, IncDaily, totalProfitAmount);
+                        Intent intentt = new Intent(getActivity(), PaypalIntegration.class);
+                        getActivity().startActivity(intentt);
+
+                    }else{
+
+
+                    }
+
+                }
+            }
+        });
+
+
+
 
     }
 

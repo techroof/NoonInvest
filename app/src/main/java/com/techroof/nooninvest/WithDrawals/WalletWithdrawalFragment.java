@@ -32,7 +32,10 @@ import com.techroof.nooninvest.HomeActivity;
 import com.techroof.nooninvest.PayPal.PaypalIntegration;
 import com.techroof.nooninvest.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -49,9 +52,11 @@ public class WalletWithdrawalFragment extends Fragment {
     private String UName;
     private String withdrawalId;
     private String bankName;
+    private String date, currentDate;
     private final String Status = "Requested";
     private double WithDrawalamaount;
     private DocumentReference ref;
+    private String email;
     private String Uidd, Statuss, userWithdrawlStatus = "";
     private ConstraintLayout walletCl,investmentCl;
 
@@ -108,17 +113,18 @@ public class WalletWithdrawalFragment extends Fragment {
 
         firestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
-        uid = FirebaseAuth.getInstance().getUid();
+        uid = firebaseAuth.getCurrentUser().getUid();
 
-        getdata();
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+
+
+        getAccountDetails();
         getName();
-        getTotalProfit();
-        getuserData();
 
         //method
 
 
-        firestore.collection("wallets").document(uId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firestore.collection("wallets").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -192,14 +198,15 @@ public class WalletWithdrawalFragment extends Fragment {
                 if (userWithdrawlStatus.equals("False")) {
                     //adding
                     //Toast.makeText(getContext(),"Your withdrawal limit is not reached yet",Toast.LENGTH_LONG).show();
-                    if (WithDrawalamaount >= 100) {
+                    if (WithDrawalamaount >= 10) {
                         //Toast.makeText(getContext(),"TESTEDy",Toast.LENGTH_LONG).show();
 
-                        Addrequest(uid, UName, AccountNumber, Status, WithDrawalamaount,bankName);
+                        getdata();
 
 
                     }
-                    if(WithDrawalamaount<100){
+                    if(WithDrawalamaount<10){
+
 
                         Toast.makeText(getContext(),"Your withdrawal limit is not reached yet",Toast.LENGTH_LONG).show();
 
@@ -208,7 +215,7 @@ public class WalletWithdrawalFragment extends Fragment {
                 } else if (userWithdrawlStatus.equals("True")) {
 
 
-                    Toast.makeText(getContext(), "you have already requested" + userWithdrawlStatus, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "you have already requested", Toast.LENGTH_SHORT).show();
 
                 }
                 Intent intent = new Intent(getContext(), HomeActivity.class);
@@ -293,17 +300,17 @@ public class WalletWithdrawalFragment extends Fragment {
         });
     }
 
-    private void Addrequest(String uid, String uName, String accountNumber, String status, double WithdrawalAmounts,String BankName) {
+    private void Addrequest(String uid, String uName, String status, double WithdrawalAmounts,String email,String date) {
         ref = firestore.collection("SentRequestsWallets").document();
         withdrawalId = ref.getId();
         Map<String, Object> AccountMap = new HashMap<>();
         AccountMap.put("Uid", uid);
         AccountMap.put("name", uName);
-        AccountMap.put("AccountNumber", accountNumber);
         AccountMap.put("Status", status);
         AccountMap.put("withdrawalAmount", WithdrawalAmounts);
+        AccountMap.put("email",email);
+        AccountMap.put("RequestedDate",date);
         AccountMap.put("WithDrawalId", withdrawalId);
-        AccountMap.put("BankName",bankName);
         ref.set(AccountMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -326,7 +333,6 @@ public class WalletWithdrawalFragment extends Fragment {
             }
         });
 
-
     }
 
     private void getName() {
@@ -344,6 +350,9 @@ public class WalletWithdrawalFragment extends Fragment {
                         UName = document.getString("name");
 
                     }
+
+                    getuserData();
+
                 } else {
                     Log.d("d", "Error getting documents: ", task.getException());
 
@@ -365,42 +374,38 @@ public class WalletWithdrawalFragment extends Fragment {
     private void getdata() {
 
         uid = FirebaseAuth.getInstance().getUid();
-        firestore.collection("AccountNo")
-                .whereEqualTo("id", uid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        date=currentDate;
+        firestore.collection("AccountNo").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if (task.isSuccessful()) {
 
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+                if(task.getResult().exists()){
 
-                        String UAccountNo = document.getString("AccountNumber");
-                        String bnkname=document.getString("BankName");
-                        uid = firebaseAuth.getUid();
-                        // Toast.makeText(getContext(), " id" + uid, Toast.LENGTH_SHORT).show();
-                        tvAccountnumber.setText(UAccountNo);
-                        tvBankName.setText(bnkname);
-                        //availableAmountText.setText("$" + WithDrawalamaount);
-                        AccountNumber = tvAccountnumber.getText().toString();
-                        BankName=tvBankName.getText().toString();
+                    AccountNumber=task.getResult().getString("AccountNumber");
+                    BankName=task.getResult().getString("accountType");
 
+                    if(AccountNumber==null){
+
+                        AccountNumber=task.getResult().getString("JazzCashAccountNumber");
+                        tvAccountnumber.setText(AccountNumber);
                     }
-                } else {
-                    Log.d("d", "Error getting documents: ", task.getException());
 
+                    Addrequest(uid, UName, Status, WithDrawalamaount,date,email);
+
+                }else{
+
+                    Toast.makeText(getActivity(), "Please Add Your AccountDetails/billing First", Toast.LENGTH_SHORT).show();
                 }
+
             }
-
-
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
 
-
             }
         });
-
-
     }
 
     //profile details
@@ -420,13 +425,18 @@ public class WalletWithdrawalFragment extends Fragment {
                         String UName = document.getString("name");
                         String UEmail = document.getString("email");
                         String UPhoneNumber = document.getString("phoneNumber");
-                        uId = firebaseAuth.getUid();
+
+                        email=UEmail;
                         // Toast.makeText(getContext(), " id" + uId, Toast.LENGTH_SHORT).show();
                         tvName.setText(UName);
                         tvEmail.setText(UEmail);
+
                         tvPhoneNumber.setText(UPhoneNumber);
 
                     }
+
+                    getTotalProfit();
+
                 } else {
                     Log.d("d", "Error getting documents: ", task.getException());
 
@@ -499,8 +509,50 @@ public class WalletWithdrawalFragment extends Fragment {
 
     }
 
+    private void getAccountDetails(){
 
 
 
+        uid = FirebaseAuth.getInstance().getUid();
+
+        date=currentDate;
+        firestore.collection("AccountNo").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+
+                if(task.getResult().exists()){
+
+                    AccountNumber=task.getResult().getString("AccountNumber");
+                    BankName=task.getResult().getString("BankName");
+
+                    tvAccountnumber.setText(AccountNumber);
+                    tvBankName.setText(BankName);
+
+
+                    if(AccountNumber==null||BankName==null){
+
+                        AccountNumber=task.getResult().getString("JazzCashAccountNumber");
+                        BankName=task.getResult().getString("accountType");
+                        tvAccountnumber.setText(AccountNumber);
+                        tvBankName.setText(BankName);
+
+                    }
+
+
+                }else{
+
+                    Toast.makeText(getActivity(), "Please Add Your AccountDetails", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+    }
 
 }

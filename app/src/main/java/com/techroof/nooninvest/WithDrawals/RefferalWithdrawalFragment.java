@@ -26,7 +26,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.techroof.nooninvest.HomeActivity;
 import com.techroof.nooninvest.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -36,7 +39,7 @@ public class RefferalWithdrawalFragment extends Fragment {
     private Button btnRqstamount;
     private FirebaseFirestore firestore;
     private FirebaseAuth firebaseAuth;
-    private String uid;
+    private String uid,email;
     private String AccountNumber;
     private String UName;
     private String withdrawalId;
@@ -48,6 +51,7 @@ public class RefferalWithdrawalFragment extends Fragment {
     private String UAccountNo;
     private DocumentReference ref;
     private String Uidd, Statuss, userWithdrawlStatus = "";
+    private String date, currentDate;
 
 
     public RefferalWithdrawalFragment() {
@@ -79,9 +83,9 @@ public class RefferalWithdrawalFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
 
         uid = FirebaseAuth.getInstance().getUid();
-        getdata();
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+
         getName();
-        getTotalProfit();
 
         uid = firebaseAuth.getUid();
         AccountNumber = UAccountNo;
@@ -181,11 +185,9 @@ public class RefferalWithdrawalFragment extends Fragment {
                         WithDrawalamaount = document.getDouble("totalProfit").doubleValue();
                         dailyAmount = String.valueOf(document.get("dailyAmount"));
                         activationDate = String.valueOf(document.get("ActivationDate"));
-
                         totalAvailableText.setText("$" + WithDrawalamaount);
                         dailyAmountText.setText("Daily Amount: $" + dailyAmount);
                         activationDateText.setText("Activation Date: " + activationDate);
-
 
                     } else {
 
@@ -195,22 +197,21 @@ public class RefferalWithdrawalFragment extends Fragment {
                 }
             }
 
-
         });
     }
 
 
-    private void Addrequest(String uid, String uName, String accountNumber, String status, double WithdrawalAmounts,String BankName) {
+    private void Addrequest(String uid, String uName, String status, double WithdrawalAmounts,String email,String date) {
         ref = firestore.collection("SentRequestsRefferals").document();
         withdrawalId = ref.getId();
         Map<String, Object> AccountMap = new HashMap<>();
         AccountMap.put("Uid", uid);
         AccountMap.put("name", uName);
-        AccountMap.put("AccountNumber", accountNumber);
         AccountMap.put("Status", status);
         AccountMap.put("withdrawalAmount", WithdrawalAmounts);
+        AccountMap.put("email", email);
+        AccountMap.put("RequestedDate",date);
         AccountMap.put("WithDrawalId", withdrawalId);
-        AccountMap.put("BankName",BankName);
         ref.set(AccountMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -250,8 +251,11 @@ public class RefferalWithdrawalFragment extends Fragment {
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
                         UName = document.getString("name");
+                        email=document.getString("email");
 
                     }
+
+                    getTotalProfit();
                 } else {
                     Log.d("d", "Error getting documents: ", task.getException());
 
@@ -272,49 +276,27 @@ public class RefferalWithdrawalFragment extends Fragment {
 
     private void getdata() {
 
+        date=currentDate;
         uid = FirebaseAuth.getInstance().getUid();
-        firestore.collection("AccountNo")
-                .whereEqualTo("id", uid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firestore.collection("AccountNo").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.getResult().exists()){
 
-                if (task.isSuccessful()) {
-
-                    if (task.getResult().isEmpty()) {
-
-                        accountNumberText.setText("Account Number: "+"N/A");
+                    Addrequest(uid, UName, Status, WithDrawalamaount,email,date);
 
 
-                    } else {
+                }else{
 
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-
-                            UAccountNo = document.getString("AccountNumber");
-                            bankNAme=document.getString("BankName");
-                            uid = firebaseAuth.getUid();
-                            //Toast.makeText(getContext(), " id" + uid, Toast.LENGTH_SHORT).show();
-                            accountNumberText.setText("Account Number: "+UAccountNo);
-                            bankName.setText("Bank Name:  "+bankNAme);
-
-                        }
-                    }
-
-                } else {
-                    Log.d("d", "Error getting documents: ", task.getException());
-
+                    Toast.makeText(getContext(), "Please Add Your AccountDetails/billing First", Toast.LENGTH_SHORT).show();
                 }
             }
-
-
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
 
-
             }
         });
-
 
     }
 
@@ -325,7 +307,8 @@ public class RefferalWithdrawalFragment extends Fragment {
 
             if (WithDrawalamaount >= 100) {
 
-                Addrequest(uid, UName, AccountNumber, Status, WithDrawalamaount,bankNAme);
+                getdata();
+
             }
             if(WithDrawalamaount<100){
 
@@ -335,8 +318,7 @@ public class RefferalWithdrawalFragment extends Fragment {
 
         } else if (userWithdrawlStatus.equals("True")) {
 
-
-            Toast.makeText(getContext(), "you have already requested" + userWithdrawlStatus, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "you have already requested", Toast.LENGTH_SHORT).show();
 
         }
     }

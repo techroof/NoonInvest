@@ -19,14 +19,14 @@
         android:theme="@style/Theme.NoonInvest"
         android:usesCleartextTraffic="true">
         <activity
+            android:name="com.techroof.Notifications.Notifications"
+            android:exported="false" />
+        <activity
             android:name=".StripePayments.StripeCheckout"
-            android:exported="true" >
-
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".CreditCardPayments"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name="com.techroof.AboutusActivity"
             android:exported="false" />
@@ -50,7 +50,7 @@
             android:exported="false" />
         <activity
             android:name=".Authentication.LoginActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".AccountDetails"
             android:exported="false" />
@@ -60,21 +60,27 @@
         <activity
             android:name=".SplashScreen.SplashScreen"
             android:exported="true">
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.techroof.Notifications.PushNotifications"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".Authentication.RegistrationActivity"
             android:exported="false" />
         <activity
             android:name=".HomeActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -96,6 +102,15 @@
         <receiver
             android:name=".BackgroundServices.BackgroundServices"
             android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.techroof.Services.Services"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
